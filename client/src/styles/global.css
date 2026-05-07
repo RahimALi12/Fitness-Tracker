@@ -1,0 +1,303 @@
+/* =============================== */
+/*          global.css              */
+/* =============================== */
+
+/* 1. Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+/* 2. CSS Reset + Box Sizing */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 3. Root variables for easy theming */
+:root {
+  /* Colors */
+  --color-primary: #85bb3d;
+  --color-primary-dark: #388e3c;
+  --color-secondary: #f2994a;
+  --color-bg-light: #fefefe;
+  --color-bg-dark: #121212;
+  --color-text-light: #111111;
+  --color-text-dark: #e0e0e0;
+  --color-link: var(--color-primary);
+
+  /* Fonts */
+  --font-primary: 'Poppins', sans-serif;
+  --font-secondary: 'Roboto', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  /* Border radius */
+  --border-radius: 6px;
+
+  /* Transition */
+  --transition-speed: 0.3s;
+}
+
+
+/* 4. Base styles */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* 5. Scrollbar styling for WebKit browsers */
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 5px;
+  border: 2px solid #85bb3d;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* 6. Links */
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  transition: color var(--transition-speed);
+}
+
+a:hover,
+a:focus {
+  color: var(--color-primary-dark);
+  outline: none;
+}
+
+/* 7. Utility classes */
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 8. Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+  user-select: none;
+}
+
+.btn:hover,
+.btn:focus {
+  background-color: var(--color-primary-dark);
+  outline: none;
+}
+
+/* 9. Form inputs */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+input,
+textarea,
+select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  transition: border-color var(--transition-speed);
+  width: 100%;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+/* 10. Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+/* 11. Responsive adjustments */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* .custom-toast-confirmation {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  padding: 24px;
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  color: #1f1f1f;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  max-width: 420px;
+  margin: auto;
+}
+
+.toast-title {
+  font-size: 1.5rem;
+  color: #198754; 
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.toast-subtitle {
+  font-size: 1.2rem;
+  color: #000000; 
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.toast-message {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.toast-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.toast-buttons .btn {
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-weight: 500;
+}
+
+
+.toast-buttons .btn-delete {
+  background-color: #198754; 
+  color: white;
+}
+
+.toast-buttons .btn-delete:hover {
+  background-color: #157347;
+  transform: scale(1.05);
+}
+
+.toast-buttons .btn-cancel {
+  background-color: #dc3545; 
+  color: white;
+}
+
+.toast-buttons .btn-cancel:hover {
+  background-color: #bb2d3b;
+  transform: scale(1.05);
+} */
+
+.custom-toast-confirmation {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  padding: 30px;
+  background: linear-gradient(135deg, #d2f50b, #77d906);
+  box-shadow: 0 4px 12px rgba(17, 32, 5, 0.5);
+  border-radius: 1px;
+  text-align: center;
+  max-width: 420px;
+  margin: auto;
+}
+
+.toast-title {
+   font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  color: #000; 
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+/* .toast-subtitle {
+  font-size: 1.2rem;
+  color: #000; 
+  margin-bottom: 12px;
+  font-weight: 600;
+} */
+
+.toast-message {
+  font-size: 1rem;
+  color: #222;
+  margin-bottom: 24px;
+}
+
+.toast-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.toast-buttons .btn {
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-weight: 500;
+ color: rgb(255, 255, 255);
+     background: linear-gradient(135deg, #727272, #000000);
+  box-shadow: 0 1px 6px rgba(19, 36, 5, 0.5);
+}
+
+.toast-buttons .btn:hover {
+ color: rgb(255, 255, 255);
+     background: linear-gradient(135deg, #727272, #000000);
+  box-shadow: 0 3px 8px rgba(19, 36, 5, 0.5);
+}

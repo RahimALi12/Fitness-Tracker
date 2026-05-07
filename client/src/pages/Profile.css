@@ -1,0 +1,323 @@
+
+.reg-wrapper {
+  display: flex;
+  margin-top: 30px;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 4rem 1rem 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecf1 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.reg-box {
+  background: linear-gradient(145deg, #ffffff, #f8fafc);
+  padding: 3rem 2.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    0 10px 25px rgba(0, 0, 0, 0.05),
+    0 4px 10px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+}
+
+.reg-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #d2f50b, #77d906, #25eb2f);
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+
+
+/* Title with consistent green colors */
+.reg-title {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #77d906, #25eb2f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 2rem;
+  font-family: 'Georgia', sans-serif;
+  position: relative;
+}
+
+.reg-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #d2f50b, #77d906);
+  border-radius: 2px;
+}
+
+/* Profile Picture Upload */
+.reg-image-upload {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 2rem;
+  width: 140px;
+  height: 140px;
+}
+
+.reg-profile-pic {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #ffffff;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.15),
+    0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.reg-profile-pic:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 12px 35px rgba(0, 0, 0, 0.2),
+    0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+/* Black Camera Icon */
+.reg-camera-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: linear-gradient(135deg, #b0ff55, #0a7500);
+  color: white;
+  border-radius: 50%;
+  padding: 0.75rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  border: 3px solid white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 15px rgba(55, 65, 81, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+}
+
+.reg-camera-icon:hover {
+  background: linear-gradient(135deg, #a3ff3a, #085e00);
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 
+    0 8px 25px rgba(55, 65, 81, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Input Fields with consistent green focus */
+.reg-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.875rem;
+  font-size: 1rem;
+  background: linear-gradient(145deg, #ffffff, #f8fafc);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+  font-weight: 500;
+  color: #374151;
+  box-sizing: border-box;
+}
+
+.reg-input:focus {
+  outline: none;
+  border-color: #77d906;
+  box-shadow: 
+    0 0 0 4px rgba(119, 217, 6, 0.15),
+    0 8px 25px -8px rgba(119, 217, 6, 0.3);
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.reg-input:hover {
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+}
+
+.reg-input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* Submit Button with consistent green colors */
+.reg-button {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #d2f50b 0%, #77d906 50%, #25eb2f 100%);
+  color: #1f2937;
+  border: none;
+  border-radius: 0.875rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 1rem;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 25px rgba(119, 217, 6, 0.4),
+    0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.reg-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s;
+}
+
+.reg-button:hover::before {
+  left: 100%;
+}
+
+.reg-button:hover {
+  background: linear-gradient(135deg, #b7f50b 0%, #42d906 50%, #16a34a 100%);
+  transform: translateY(-3px);
+  box-shadow: 
+    0 12px 35px rgba(119, 217, 6, 0.6),
+    0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.reg-button:active {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 20px rgba(119, 217, 6, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading animation for submit button */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.reg-button:disabled {
+  background: linear-gradient(90deg, #cbd5e1 0px, #e2e8f0 40px, #cbd5e1 80px);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Link Styling with green accent */
+.reg-login-link {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-top: 1.5rem;
+  font-weight: 500;
+}
+
+.reg-login-link a {
+  color: #77d906;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.reg-login-link a:hover {
+  color: #25eb2f;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .reg-wrapper {
+    padding: 2rem 0.5rem 1rem;
+    align-items: center;
+  }
+  
+  .reg-box {
+    padding: 2.5rem 2rem;
+    border-radius: 1.2rem;
+    max-width: 400px;
+  }
+  
+  .reg-title {
+    font-size: 1.75rem;
+  }
+  
+  .reg-image-upload {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .reg-camera-icon {
+    width: 40px;
+    height: 40px;
+    padding: 0.6rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .reg-wrapper {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  .reg-box {
+    padding: 2rem 1.5rem;
+    border-radius: 1rem;
+  }
+  
+  .reg-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .reg-input {
+    font-size: 0.95rem;
+    padding: 0.875rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .reg-button {
+    font-size: 1rem;
+    padding: 0.875rem 1.5rem;
+  }
+  
+  .reg-image-upload {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .reg-camera-icon {
+    width: 35px;
+    height: 35px;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .reg-wrapper {
+    padding-top: 2rem;
+  }
+}

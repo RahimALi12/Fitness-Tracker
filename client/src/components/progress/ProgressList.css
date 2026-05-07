@@ -1,0 +1,646 @@
+/* 
+.progress-list-container {
+  padding: 24px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+.heading {
+
+  font-family: 'Georgia', sans-serif;
+  font-weight: 900;
+  font-size: 30px;
+  color: #698600;
+  margin-bottom: 10px;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+
+.header-container button {
+  background: linear-gradient(135deg, #d2f50b, #77d906);
+  box-shadow: 0 4px 12px rgba(133, 251, 36, 0.5);
+  color: rgba(0, 0, 0, 0.89);
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.header-container button:hover {
+  background: linear-gradient(135deg, #b7f50b, #42d906);
+  box-shadow: 0 6px 16px rgba(133, 251, 36, 0.774);
+}
+
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(320px,1fr));
+  gap: 20px;
+}
+
+
+.progress-card {
+  background-color: white;
+  border-radius: 5px;
+    box-shadow: 0 0px 7px 1px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.progress-card .date-line {
+     background: linear-gradient(135deg, #4ed112, #468103);
+  box-shadow: 0 4px 12px rgba(85, 160, 25, 0.5);
+  color: rgba(255, 255, 255, 0.89);
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 16px;
+  user-select: none;
+  letter-spacing: 0.05em;
+}
+
+
+.progress-details p {
+  margin: 6px 0;
+  color: #374151;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.progress-details strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+
+.action-btn {
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.2s ease;
+  min-width: 90px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  user-select: none;
+}
+
+.action-btn.edit {
+  background: linear-gradient(135deg, #0be5f5, #069dd9);
+  box-shadow: 0 4px 12px rgba(36, 251, 233, 0.5);
+}
+
+.action-btn.edit:hover {
+  background: linear-gradient(135deg, #0b97f5, #065ad9);
+  box-shadow: 0 6px 16px rgba(6, 150, 217, 0.6);
+}
+
+
+.action-btn.delete {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+}
+
+.action-btn.delete:hover {
+  background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+  box-shadow: 0 6px 16px rgba(127, 29, 29, 0.6);
+}
+
+@media (max-width: 640px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+} */
+
+.progress-list-container {
+  padding: 24px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header Container - Same as WorkoutList */
+.progress-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+
+.progress-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-heading {
+  font-family: 'Georgia', sans-serif;
+  font-weight: 900;
+  font-size: 32px;
+  color: #698600;
+  margin: 0;
+}
+
+.progress-counter {
+  background: linear-gradient(135deg, #dcfedb, #bffec2);
+  color: #2d5a2d;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  border: 1px solid #a8fd93;
+  box-shadow: 0 2px 8px rgba(168, 253, 147, 0.3);
+  display: inline-block;
+}
+
+.progress-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Glass Effect Add Button - Same as WorkoutList but with backdrop filter */
+.progress-add-btn {
+  background: linear-gradient(135deg, rgba(210, 245, 11, 0.9), rgba(119, 217, 6, 0.9));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(133, 251, 36, 0.5);
+  color: rgba(0, 0, 0, 0.89);
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-add-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s;
+}
+
+.progress-add-btn:hover::before {
+  left: 100%;
+}
+
+.progress-add-btn:hover {
+  background: linear-gradient(135deg, rgba(183, 245, 11, 0.95), rgba(66, 217, 6, 0.95));
+  box-shadow: 0 6px 16px rgba(133, 251, 36, 0.774);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Filter Toggle Button - Same as WorkoutList */
+.filter-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: #34495e;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(52, 73, 94, 0.25);
+  position: relative;
+  letter-spacing: 0.3px;
+}
+
+.filter-toggle-btn:hover {
+  background: #2c3e50;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(44, 62, 80, 0.3);
+}
+
+.filter-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.filter-badge {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 6px;
+  box-shadow: 0 2px 6px rgba(231, 76, 60, 0.3);
+}
+
+/* Filter Panel - Exact same as WorkoutList */
+.filter-panel {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #34495e;
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 36px;
+  box-shadow: 
+    0 15px 50px rgba(52, 73, 94, 0.12),
+    0 8px 30px rgba(52, 73, 94, 0.08);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #34495e;
+  border-radius: 20px 20px 0 0;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 36px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.filter-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.clear-filters-btn {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.25);
+  letter-spacing: 0.3px;
+}
+
+.clear-filters-btn:hover {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(231, 76, 60, 0.35);
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  margin-top: 8px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  border: 1px solid #e8ecf0;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.filter-group:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #d5dbdb;
+  transform: translateY(-2px);
+}
+
+.filter-label {
+  font-size: 17px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.filter-input {
+  padding: 16px 20px;
+  border: 2px solid #e8ecf0;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+  font-weight: 500;
+  color: #2c3e50;
+  min-height: 24px;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #34495e;
+  box-shadow: 0 0 0 4px rgba(52, 73, 94, 0.08);
+  transform: translateY(-1px);
+}
+
+.date-range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.date-input {
+  flex: 1;
+  min-width: 140px;
+}
+
+.date-separator {
+  color: #7f8c8d;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  padding: 0 8px;
+}
+
+/* No Results States - Same as WorkoutList */
+.no-workouts-message {
+  text-align: center;
+  padding: 100px 40px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px;
+  box-shadow: 
+    0 15px 50px rgba(52, 73, 94, 0.08),
+    0 8px 30px rgba(52, 73, 94, 0.04);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #ecf0f1;
+}
+
+.no-workouts-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #34495e;
+  border-radius: 20px 20px 0 0;
+}
+
+/* Progress Cards Grid */
+.progress-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+/* Progress Card - Enhanced with better shadows */
+.progress-card {
+  background: linear-gradient(145deg, #ffffff, #f8fafc);
+  border-radius: 1rem;
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.08),
+    0 5px 15px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.progress-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #d2f50b, #77d906, #25eb2f);
+}
+
+.progress-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 
+    0 25px 60px rgba(0, 0, 0, 0.12),
+    0 15px 35px rgba(0, 0, 0, 0.08),
+    0 5px 15px rgba(0, 0, 0, 0.04);
+  border-color: rgba(37, 235, 47, 0.3);
+}
+
+.progress-card-header {
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.progress-date {
+  font-size: 1.1rem;
+  font-weight: 600; /* Reduced from 700 */
+  color: #374151;
+}
+
+.progress-weight-badge {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-weight: 600; /* Reduced from 700 */
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.progress-card-content {
+  padding: 1.5rem;
+}
+
+.progress-section-title {
+  font-size: 1rem;
+  font-weight: 600; /* Reduced from 700 */
+  color: #4b5563;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-measurements {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.progress-metric {
+  background: #f9fafb;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.progress-metric:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.progress-metric-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500; /* Reduced from 600 */
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.progress-metric-value {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600; /* Reduced from 700 */
+  color: #374151;
+}
+
+.progress-notes {
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border-left: 4px solid #10b981;
+  color: #374151;
+  font-style: italic;
+  line-height: 1.5;
+  font-weight: 400; /* Keep normal for notes */
+}
+
+.progress-card-actions {
+  background: #f8fafc;
+  padding: 1rem 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.progress-action-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.progress-edit-btn {
+  background: linear-gradient(135deg, #0be5f5, #069dd9);
+  box-shadow: 0 4px 15px rgba(36, 251, 233, 0.4);
+  color: white;
+}
+
+.progress-edit-btn:hover {
+  background: linear-gradient(135deg, #0b97f5, #065ad9);
+  box-shadow: 0 6px 20px rgba(6, 150, 217, 0.6);
+  transform: translateY(-1px);
+  color: white;
+}
+
+.progress-delete-btn {
+   background: linear-gradient(135deg, #ef4444, #b91c1c);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+  color: white;
+}
+
+.progress-delete-btn:hover {
+background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+  box-shadow: 0 6px 20px rgba(127, 29, 29, 0.6);
+  transform: translateY(-1px);
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .progress-list-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .progress-header-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .progress-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .progress-measurements {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

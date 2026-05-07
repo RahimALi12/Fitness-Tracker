@@ -1,0 +1,89 @@
+
+
+.progress-form-container {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0px 13px 2px rgba(0, 0, 0, 0.13);
+  max-width: 620px;
+  margin: 5rem auto;
+  border: 1px solid #e5e7eb;
+}
+
+.progress-form-container h2 {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #698600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+   font-family: 'Georgia', sans-serif;
+}
+
+.progress-form-input,
+.progress-form-textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  background-color: #f9fafb;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.progress-form-input:focus,
+.progress-form-textarea:focus {
+  border-color: #25eb2f;
+  box-shadow: 0 0 0 3px rgba(128, 246, 59, 0.2);
+  outline: none;
+  background-color: #ffffff;
+}
+
+.progress-form-grid {
+  display: grid;
+  gap: 1.2rem;
+    margin-top: 1rem;
+}
+
+.progress-form-grid-1 {
+  grid-template-columns: repeat(2, 1fr); 
+  margin-top: 1rem;
+}
+
+.progress-form-grid-3 {
+  grid-template-columns: repeat(3, 1fr); 
+  margin-top: 1rem;
+}
+
+.progress-form-grid-2 {
+  grid-template-columns: repeat(2, 1fr); 
+    margin-top: 1rem;
+}
+
+.progress-form-button {
+      background: linear-gradient(135deg, #d2f50b, #77d906);
+  box-shadow: 0 4px 12px rgba(133, 251, 36, 0.5);
+  color: rgba(0, 0, 0, 0.89);
+  padding: 0.85rem 2.2rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.75rem;
+  transition: background 0.3s ease;
+  margin-top: 1rem;
+}
+
+.progress-form-button:hover {
+  background: linear-gradient(135deg, #b7f50b, #42d906);
+  box-shadow: 0 6px 16px rgba(133, 251, 36, 0.774);
+}
+
+.progress-form-button:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.progress-form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+
