@@ -2,7 +2,8 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:5000/api', // Change if your backend is deployed
+  // Ab ye localhost ke bajaye Vercel ke relative path se connect karega
+  baseURL: '/api', 
 });
 
 instance.interceptors.request.use((config) => {
