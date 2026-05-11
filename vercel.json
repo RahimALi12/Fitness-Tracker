@@ -22,5 +22,35 @@
       "source": "/(.*)",
       "destination": "/client/index.html"
     }
+  ],
+    "routes": [
+
+    {
+
+      "src": "/api/(.*)",
+
+      "dest": "server/index.js"
+
+    },
+
+    {
+
+      "src": "/(.*)",
+
+      "dest": "client/$1",
+
+      "check": true
+
+    }
+
   ]
 }
+
+
+
+
+
+
+
+
+
