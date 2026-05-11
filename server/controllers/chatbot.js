@@ -246,143 +246,242 @@
 
 
 
+// const express = require('express');
+// const router = express.Router();
+// const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// // Robust initialization
+// let genAI = null;
+// let isAIReady = false;
+
+// const initializeGemini = () => {
+//   try {
+//     const apiKey = process.env.GEMINI_API_KEY;
+    
+//     console.log('🔧 Initializing Gemini AI...');
+//     console.log('🔑 API Key Status:', apiKey ? 'FOUND' : 'MISSING');
+//     console.log('🔑 API Key Length:', apiKey?.length || 0);
+//     console.log('🔑 API Key Preview:', apiKey ? `${apiKey.substring(0, 10)}...${apiKey.slice(-4)}` : 'N/A');
+    
+//     if (!apiKey) {
+//       console.error('❌ GEMINI_API_KEY is missing');
+//       return false;
+//     }
+    
+//     if (apiKey === 'your_api_key_here' || apiKey.length < 30) {
+//       console.error('❌ GEMINI_API_KEY seems invalid');
+//       return false;
+//     }
+    
+//     genAI = new GoogleGenerativeAI(apiKey);
+//     isAIReady = true;
+    
+//     console.log('✅ Gemini AI initialized successfully');
+//     return true;
+    
+//   } catch (error) {
+//     console.error('❌ Gemini initialization failed:', error.message);
+//     isAIReady = false;
+//     return false;
+//   }
+// };
+
+// // Initialize immediately
+// const initialized = initializeGemini();
+
+// router.post('/chatbot', async (req, res) => {
+//   console.log('📨 Chatbot API called with:', req.body);
+  
+//   try {
+//     const { message, isContextual } = req.body;
+
+//     if (!message || message.trim() === '') {
+//       return res.json({ 
+//         reply: "Please ask me something about fitness, workouts, nutrition, or health!",
+//         status: 'error'
+//       });
+//     }
+
+//     // Check if AI is ready
+//     if (!initialized || !isAIReady || !genAI) {
+//       console.log('⚠️ AI not ready, returning error message');
+//       return res.json({ 
+//         reply: "I'm having trouble connecting to my AI brain right now. Please try again in a moment! In the meantime, I'm here to help with any fitness, workout, nutrition, or health questions you have.",
+//         status: 'fallback'
+//       });
+//     }
+
+//     // Enhanced AI prompting for fitness-focused responses with context
+//     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+//     let enhancedPrompt;
+    
+//     if (isContextual) {
+//       enhancedPrompt = `You are an expert fitness coach and nutritionist. You ONLY answer questions related to fitness, workouts, nutrition, health, wellness, weight management, muscle building, and sports.
+
+// Context and conversation flow:
+// ${message}
+
+// Instructions:
+// - If the question is about fitness/health topics, provide helpful, practical advice in 2-3 sentences
+// - If the question is NOT about fitness/health, respond: "I'm a fitness assistant and can only help with workout, nutrition, and health questions. What fitness goals can I help you with today?"
+// - Always maintain conversation context and provide connected, relevant responses
+// - Be encouraging and motivational
+// - Give specific, actionable advice when possible
+
+// Respond naturally as a fitness expert:`;
+//     } else {
+//       enhancedPrompt = `You are an expert fitness coach and nutritionist. You ONLY answer questions related to fitness, workouts, nutrition, health, wellness, weight management, muscle building, and sports.
+
+// Question: "${message}"
+
+// Instructions:
+// - If the question is about fitness/health topics, provide helpful, practical advice in 2-3 sentences
+// - If the question is NOT about fitness/health, respond: "I'm a fitness assistant and can only help with workout, nutrition, and health questions. What fitness goals can I help you with today?"
+// - Be encouraging and motivational
+// - Give specific, actionable advice when possible
+
+// Respond as a fitness expert:`;
+//     }
+
+//     console.log('🤖 Sending enhanced request to Gemini...');
+    
+//     const result = await Promise.race([
+//       model.generateContent(enhancedPrompt),
+//       new Promise((_, reject) => 
+//         setTimeout(() => reject(new Error('Request timeout')), 20000)
+//       )
+//     ]);
+
+//     const response = await result.response;
+//     const reply = response.text();
+
+//     console.log('✅ Gemini response received');
+
+//     res.json({ 
+//       reply: reply.trim(),
+//       status: 'success'
+//     });
+
+//   } catch (error) {
+//     console.error('❌ Chatbot error:', error.message);
+    
+//     res.json({ 
+//       reply: "I'm having trouble generating a response right now. Please try asking your fitness question again, or ask me about workouts, nutrition, or health topics!",
+//       status: 'error'
+//     });
+//   }
+// });
+
+// // Test endpoint
+// router.get('/test', (req, res) => {
+//   res.json({
+//     message: 'Enhanced Chatbot API working',
+//     aiReady: isAIReady,
+//     hasApiKey: !!process.env.GEMINI_API_KEY,
+//     keyLength: process.env.GEMINI_API_KEY?.length || 0,
+//     initialized: initialized,
+//     features: ['contextual_conversation', 'ai_only_responses', 'fitness_focused']
+//   });
+// });
+
+// module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const express = require('express');
 const router = express.Router();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// Robust initialization
+// Global variables
 let genAI = null;
-let isAIReady = false;
 
-const initializeGemini = () => {
-  try {
+const getAIInstance = () => {
+    if (genAI) return genAI;
+
     const apiKey = process.env.GEMINI_API_KEY;
-    
-    console.log('🔧 Initializing Gemini AI...');
-    console.log('🔑 API Key Status:', apiKey ? 'FOUND' : 'MISSING');
-    console.log('🔑 API Key Length:', apiKey?.length || 0);
-    console.log('🔑 API Key Preview:', apiKey ? `${apiKey.substring(0, 10)}...${apiKey.slice(-4)}` : 'N/A');
-    
-    if (!apiKey) {
-      console.error('❌ GEMINI_API_KEY is missing');
-      return false;
+    if (!apiKey || apiKey === 'your_api_key_here') {
+        console.error('❌ GEMINI_API_KEY is missing or invalid');
+        return null;
     }
-    
-    if (apiKey === 'your_api_key_here' || apiKey.length < 30) {
-      console.error('❌ GEMINI_API_KEY seems invalid');
-      return false;
-    }
-    
+
     genAI = new GoogleGenerativeAI(apiKey);
-    isAIReady = true;
-    
-    console.log('✅ Gemini AI initialized successfully');
-    return true;
-    
-  } catch (error) {
-    console.error('❌ Gemini initialization failed:', error.message);
-    isAIReady = false;
-    return false;
-  }
+    return genAI;
 };
 
-// Initialize immediately
-const initialized = initializeGemini();
-
 router.post('/chatbot', async (req, res) => {
-  console.log('📨 Chatbot API called with:', req.body);
-  
-  try {
-    const { message, isContextual } = req.body;
-
-    if (!message || message.trim() === '') {
-      return res.json({ 
-        reply: "Please ask me something about fitness, workouts, nutrition, or health!",
-        status: 'error'
-      });
-    }
-
-    // Check if AI is ready
-    if (!initialized || !isAIReady || !genAI) {
-      console.log('⚠️ AI not ready, returning error message');
-      return res.json({ 
-        reply: "I'm having trouble connecting to my AI brain right now. Please try again in a moment! In the meantime, I'm here to help with any fitness, workout, nutrition, or health questions you have.",
-        status: 'fallback'
-      });
-    }
-
-    // Enhanced AI prompting for fitness-focused responses with context
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-    let enhancedPrompt;
+    console.log('📨 Chatbot API called');
     
-    if (isContextual) {
-      enhancedPrompt = `You are an expert fitness coach and nutritionist. You ONLY answer questions related to fitness, workouts, nutrition, health, wellness, weight management, muscle building, and sports.
+    try {
+        const { message, isContextual } = req.body;
+        const ai = getAIInstance();
 
-Context and conversation flow:
-${message}
+        if (!ai) {
+            return res.json({ 
+                reply: "I'm having trouble connecting to my AI brain (API Key missing). Please check your environment variables!",
+                status: 'error'
+            });
+        }
 
-Instructions:
-- If the question is about fitness/health topics, provide helpful, practical advice in 2-3 sentences
-- If the question is NOT about fitness/health, respond: "I'm a fitness assistant and can only help with workout, nutrition, and health questions. What fitness goals can I help you with today?"
-- Always maintain conversation context and provide connected, relevant responses
-- Be encouraging and motivational
-- Give specific, actionable advice when possible
+        if (!message || message.trim() === '') {
+            return res.json({ reply: "Please ask me something!", status: 'error' });
+        }
 
-Respond naturally as a fitness expert:`;
-    } else {
-      enhancedPrompt = `You are an expert fitness coach and nutritionist. You ONLY answer questions related to fitness, workouts, nutrition, health, wellness, weight management, muscle building, and sports.
+        // Using 'gemini-pro' as it's the most stable for now
+        const model = ai.getGenerativeModel({ model: 'gemini-pro' });
 
-Question: "${message}"
+        let enhancedPrompt = isContextual 
+            ? `You are an expert fitness coach. Context:\n${message}\nRespond naturally:`
+            : `You are an expert fitness coach. Question: "${message}"\nRespond as a fitness expert:`;
 
-Instructions:
-- If the question is about fitness/health topics, provide helpful, practical advice in 2-3 sentences
-- If the question is NOT about fitness/health, respond: "I'm a fitness assistant and can only help with workout, nutrition, and health questions. What fitness goals can I help you with today?"
-- Be encouraging and motivational
-- Give specific, actionable advice when possible
+        console.log('🤖 Sending request to Gemini Pro...');
+        
+        // Added a bit more timeout for safety
+        const result = await Promise.race([
+            model.generateContent(enhancedPrompt),
+            new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Request timeout')), 25000)
+            )
+        ]);
 
-Respond as a fitness expert:`;
+        const response = await result.response;
+        const reply = response.text();
+
+        res.json({ 
+            reply: reply.trim(),
+            status: 'success'
+        });
+
+    } catch (error) {
+        console.error('❌ Chatbot error:', error.message);
+        res.json({ 
+            reply: "I'm having trouble generating a response right now. Please try again!",
+            status: 'error'
+        });
     }
-
-    console.log('🤖 Sending enhanced request to Gemini...');
-    
-    const result = await Promise.race([
-      model.generateContent(enhancedPrompt),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout')), 20000)
-      )
-    ]);
-
-    const response = await result.response;
-    const reply = response.text();
-
-    console.log('✅ Gemini response received');
-
-    res.json({ 
-      reply: reply.trim(),
-      status: 'success'
-    });
-
-  } catch (error) {
-    console.error('❌ Chatbot error:', error.message);
-    
-    res.json({ 
-      reply: "I'm having trouble generating a response right now. Please try asking your fitness question again, or ask me about workouts, nutrition, or health topics!",
-      status: 'error'
-    });
-  }
 });
 
 // Test endpoint
 router.get('/test', (req, res) => {
-  res.json({
-    message: 'Enhanced Chatbot API working',
-    aiReady: isAIReady,
-    hasApiKey: !!process.env.GEMINI_API_KEY,
-    keyLength: process.env.GEMINI_API_KEY?.length || 0,
-    initialized: initialized,
-    features: ['contextual_conversation', 'ai_only_responses', 'fitness_focused']
-  });
+    res.json({
+        message: 'Chatbot API status',
+        hasApiKey: !!process.env.GEMINI_API_KEY,
+        env: process.env.NODE_ENV
+    });
 });
 
 module.exports = router;
