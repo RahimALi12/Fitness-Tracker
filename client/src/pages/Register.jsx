@@ -34,7 +34,7 @@ const Register = () => {
     data.append('profilePicture', profilePicture);
 
    try {
-    const res = await fetch('http://localhost:5000/api/users/register', {
+    const res = await fetch('api/users/register', {
       method: 'POST',
       body: data,
     });
