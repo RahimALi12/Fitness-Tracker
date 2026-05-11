@@ -67,12 +67,17 @@ router.post('/chatbot', async (req, res) => {
 
 
     // Check if AI is ready
-    if (!initialized || !isAIReady || !genAI) {
-      console.log('⚠️ AI not ready, returning error message');
-      return res.json({ 
-        reply: "I'm having trouble connecting to my AI brain right now. Please try again in a moment! In the meantime, I'm here to help with any fitness, workout, nutrition, or health questions you have.",
-        status: 'fallback'
-      });
+// Check and Initialize AI on the spot
+    if (!genAI) {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (apiKey) {
+        genAI = new GoogleGenerativeAI(apiKey);
+      } else {
+        return res.json({ 
+          reply: "AI brain not connected (API Key missing in Vercel).", 
+          status: 'error' 
+        });
+      }
     }
 
     // Enhanced AI prompting for fitness-focused responses with context
