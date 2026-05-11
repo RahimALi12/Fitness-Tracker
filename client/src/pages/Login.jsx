@@ -23,7 +23,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', form);
+      const response = await axios.post('/users/login', form);
 
       loginUser(response.data);
 
