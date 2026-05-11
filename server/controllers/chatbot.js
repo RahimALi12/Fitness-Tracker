@@ -41,7 +41,7 @@ const initializeGemini = () => {
 };
 
 // Initialize immediately
-const initialized = initializeGemini();
+// const initialized = initializeGemini();
 
 router.post('/chatbot', async (req, res) => {
   console.log('📨 Chatbot API called with:', req.body);
@@ -55,6 +55,16 @@ router.post('/chatbot', async (req, res) => {
         status: 'error'
       });
     }
+
+    // Check if AI is ready
+    // if (!initialized || !isAIReady || !genAI) {
+    //   console.log('⚠️ AI not ready, returning error message');
+    //   return res.json({ 
+    //     reply: "I'm having trouble connecting to my AI brain right now. Please try again in a moment! In the meantime, I'm here to help with any fitness, workout, nutrition, or health questions you have.",
+    //     status: 'fallback'
+    //   });
+    // }
+
 
     // Check if AI is ready
     if (!initialized || !isAIReady || !genAI) {
