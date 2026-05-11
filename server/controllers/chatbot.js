@@ -312,7 +312,9 @@ router.post('/chatbot', async (req, res) => {
     }
 
     // Enhanced AI prompting for fitness-focused responses with context
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
     let enhancedPrompt;
     
@@ -349,8 +351,9 @@ Respond as a fitness expert:`;
     const result = await Promise.race([
       model.generateContent(enhancedPrompt),
       new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout')), 20000)
-      )
+        // setTimeout(() => reject(new Error('Request timeout')), 20000)
+setTimeout(() => reject(new Error('Request timeout')), 25000)
+          )
     ]);
 
     const response = await result.response;
