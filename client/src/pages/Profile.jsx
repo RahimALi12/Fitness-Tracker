@@ -15,7 +15,7 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       setFormData({ username: user.username, email: user.email });
-      setPreview(`http://localhost:5000${user.profilePicture}`);
+      setPreview(user.profilePicture);
     }
   }, [user]);
 
@@ -37,7 +37,7 @@ const handleSubmit = async (e) => {
   if (profilePicture) data.append('profilePicture', profilePicture);
 
   try {
-    const res = await fetch('http://localhost:5000/api/users/profile', {
+    const res = await fetch('/api/users/profile', {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
