@@ -22,7 +22,7 @@ const FloatingChatbot = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   
-  // 🔥 NEW: API request cancellation
+  // 🔥 API request cancellation
   const abortControllerRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -63,9 +63,9 @@ const FloatingChatbot = () => {
     return context.join('\n');
   };
 
-const sendMessage = async (messageText = null, isEdit = false, originalMessageId = null) => {
+  const sendMessage = async (messageText = null, isEdit = false, originalMessageId = null) => {
     const textToSend = messageText || inputMessage.trim();
-    if (!textToSend || isLoading) return;
+    if (!textToSend || isLoading) return; // 🔥 Double protection agar loading ho to function yahin ruk jaye
 
     let userMessage;
     
@@ -145,12 +145,10 @@ const sendMessage = async (messageText = null, isEdit = false, originalMessageId
             } else if (response.data.text) {
               botReplyText = response.data.text;
             } else if (response.data.candidates && response.data.candidates[0]?.content?.parts[0]?.text) {
-              // Google Generative AI raw structure check
               botReplyText = response.data.candidates[0].content.parts[0].text;
             } else if (response.data.message && typeof response.data.message === 'string') {
               botReplyText = response.data.message;
             } else if (response.data.message && response.data.message.content) {
-              // OpenAI standard structure check
               botReplyText = response.data.message.content;
             } else {
               botReplyText = JSON.stringify(response.data);
@@ -205,9 +203,12 @@ const sendMessage = async (messageText = null, isEdit = false, originalMessageId
       }
     }, 500);
   };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+      if (isLoading) return; // 🔥 Agar loading chal rhi hai to Enter press karne par kuch na ho
+      
       if (editingMessage) {
         sendMessage(inputMessage, true, editingMessage.id);
       } else {
@@ -231,21 +232,19 @@ const sendMessage = async (messageText = null, isEdit = false, originalMessageId
   ];
 
   const handleSuggestionClick = (suggestion) => {
+    if (isLoading) return; // 🔥 Request process hote waqt suggestions par click block
     setInputMessage(suggestion);
     if (inputRef.current) {
       inputRef.current.focus();
     }
   };
 
-  // 🔥 ENHANCED: Clear chat with complete request cancellation
   const clearChat = () => {
-    // Cancel any ongoing API request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       console.log('Cancelled ongoing API request');
     }
     
-    // Cancel any ongoing loading/typing immediately
     setIsLoading(false);
     setIsTyping(false);
     
@@ -308,7 +307,7 @@ const sendMessage = async (messageText = null, isEdit = false, originalMessageId
 
   return (
     <>
-      {/* 🔥 UPDATED: Message Square Icon */}
+      {/* Message Square Icon */}
       <div 
         className={`premium-chat-icon ${isOpen ? 'chat-open' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
@@ -321,10 +320,9 @@ const sendMessage = async (messageText = null, isEdit = false, originalMessageId
                 <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
               </svg>
             ) : (
-              // 🔥 NEW: Message Square Icon
-  <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-  <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/>
-</svg>
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/>
+              </svg>
             )}
           </div>
           <div className="ripple-effect"></div>
@@ -515,6 +513,7 @@ const sendMessage = async (messageText = null, isEdit = false, originalMessageId
                       key={index}
                       className="premium-suggestion-btn"
                       onClick={() => handleSuggestionClick(suggestion)}
+                      disabled={isLoading} // 🔥 Request loading ke dauran clicks disabled
                       style={{
                         animationDelay: `${index * 0.1}s`
                       }}
@@ -591,6 +590,8 @@ const sendMessage = async (messageText = null, isEdit = false, originalMessageId
                     <div className="input-info">
                       <span>{inputMessage.length}/500</span>
                     </div>
+                    
+                    {/* 🔥 FIXED: Button standard strict loading disable logic added */}
                     <button 
                       onClick={() => {
                         if (editingMessage) {
