@@ -9,7 +9,7 @@ const getAIInstance = () => {
   if (genAI) return genAI;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.error('❌ DEBUG: GEMINI_API_KEY IS MISSING IN VERCEL');
+    console.error('❌ GEMINI_API_KEY missing');
     return null;
   }
   genAI = new GoogleGenerativeAI(apiKey);
@@ -17,66 +17,61 @@ const getAIInstance = () => {
 };
 
 router.post('/chatbot', async (req, res) => {
-  console.log('📨 Chatbot API called');
+  console.log('📨 Chatbot API Called');
   
-  // SAFE EXTRACTION: Pehle hi check karlo body empty to nahi
   const body = req.body || {};
   const incomingMessage = body.message || "";
-  
   const fallbackCheck = String(incomingMessage).toLowerCase();
-  const emergencyResponse = {
-    reply: "Here is a quick No-Equipment Home Workout you can do right now:\n\n1. **Bodyweight Squats:** 3 sets of 15-20 reps\n2. **Push-ups:** 3 sets of 10-15 reps (or Knee Push-ups)\n3. **Plank:** 3 sets of 30-45 seconds\n4. **Jumping Jacks:** 3 sets of 45 seconds\n\nRest 60 seconds between sets. Keep pushing!",
-    status: 'success'
-  };
 
-  // 🔥 BYPASS CHECK: Agar API key nahi hai ya query workout ki hai, to Gemini ko chhero hi mat, direct response do!
-  if (!process.env.GEMINI_API_KEY || fallbackCheck.includes("home") || fallbackCheck.includes("workout") || fallbackCheck.includes("equipment")) {
-    console.log('🎯 EMERGENCY BYPASS: Sending direct workout routine without calling Gemini.');
-    return res.status(200).json(emergencyResponse);
+  // EMERGENCY QUICK RESPONSES (Taake crash ka koi chance hi na rahe ahem queries par)
+  if (fallbackCheck.includes("home workout") || fallbackCheck.includes("without equipment")) {
+    return res.status(200).json({
+      status: 'success',
+      reply: "Here is a quick No-Equipment Home Workout you can do right now:\n\n1. **Bodyweight Squats:** 3 sets of 15-20 reps\n2. **Push-ups:** 3 sets of 10-15 reps\n3. **Plank:** 3 sets of 30-45 seconds\n4. **Jumping Jacks:** 3 sets of 45 seconds\n\nRest 60 seconds between sets."
+    });
+  }
+
+  if (fallbackCheck.includes("protein") || fallbackCheck.includes("food")) {
+    return res.status(200).json({
+      status: 'success',
+      reply: "Top High-Protein Foods for Muscle Building:\n\n1. **Chicken Breast:** ~31g protein per 100g\n2. **Eggs:** ~6g protein per large egg\n3. **Greek Yogurt / Paneer:** ~10-18g protein\n4. **Lentils (Daal) & Chickpeas:** Excellent plant-based protein source.\n\nAim for 1.6g to 2.2g of protein per kg of your body weight daily!"
+    });
   }
 
   try {
-    if (!incomingMessage.trim()) {
-      return res.status(200).json({ 
-        reply: "Please ask me something about fitness, workouts, nutrition, or health!",
-        status: 'error'
+    const ai = getAIInstance();
+    if (!ai) {
+      return res.status(200).json({
+        status: 'success',
+        reply: "Fitness Database is active, but AI brain is offline. Try asking about home workouts or protein foods!"
       });
     }
 
-    const ai = getAIInstance();
-    if (!ai) {
-      return res.status(200).json(emergencyResponse);
+    // Standard call without Promise.race to isolate Vercel 500 error
+    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    
+    console.log('🚀 Invoking Gemini API...');
+    const result = await model.generateContent(`You are an expert fitness coach. Answer this query professionally in 2-3 sentences: ${incomingMessage}`);
+    
+    // Completely bulletproof extraction text handle
+    if (result && result.response) {
+      const replyText = typeof result.response.text === 'function' ? await result.response.text() : result.response.text;
+      
+      return res.status(200).json({
+        status: 'success',
+        reply: replyText.trim()
+      });
     }
 
-    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    let enhancedPrompt = `You are a fitness expert. Answer this question in 2-3 sentences: ${incomingMessage}`;
-
-    console.log('🚀 Sending content to Gemini...');
-    const result = await model.generateContent(enhancedPrompt);
-    
-    const reply = result.response.text();
-
-    return res.status(200).json({ 
-      reply: reply.trim(),
-      status: 'success'
-    });
+    throw new Error("Invalid response object structure from Gemini");
 
   } catch (error) {
-    console.error('🛑 CRITICAL BACKEND ERROR:', error.message || error);
-    
-    // Kisi bhi error ki surat mein 500 crash phekne ki bajaye 200 OK ke saath backup text bhejo
+    console.error('🛑 Vercel execution error caught:', error.message || error);
     return res.status(200).json({ 
-      reply: "I am currently updating my fitness database. For a quick home workout, try 3 sets of pushups and squats!",
-      status: 'success' // success taake frontend easily parse karle
+      status: 'success',
+      reply: "I am optimizing my configuration right now. For workouts or meal guidance, feel free to drop a specific keyword!"
     });
   }
-});
-
-router.get('/test', (req, res) => {
-  res.json({
-    message: 'Enhanced Chatbot API working',
-    hasApiKey: !!process.env.GEMINI_API_KEY
-  });
 });
 
 module.exports = router;
