@@ -63,7 +63,7 @@ const FloatingChatbot = () => {
     return context.join('\n');
   };
 
-  const sendMessage = async (messageText = null, isEdit = false, originalMessageId = null) => {
+const sendMessage = async (messageText = null, isEdit = false, originalMessageId = null) => {
     const textToSend = messageText || inputMessage.trim();
     if (!textToSend || isLoading) return;
 
@@ -99,7 +99,7 @@ const FloatingChatbot = () => {
       ));
     }
 
-    // 🔥 NEW: Create abort controller for this request
+    // 🔥 Create abort controller for this request
     abortControllerRef.current = new AbortController();
 
     setTimeout(async () => {
@@ -116,139 +116,95 @@ const FloatingChatbot = () => {
           headers: {
             'Content-Type': 'application/json'
           },
-          // 🔥 NEW: Add signal for request cancellation
           signal: abortControllerRef.current?.signal
         });
 
         console.log('Chatbot API response:', response.data);
 
-        // 🔥 NEW: Check if request was cancelled
+        // 🔥 Check if request was cancelled
         if (abortControllerRef.current?.signal.aborted) {
           console.log('Request was cancelled');
           return;
         }
 
         setTimeout(() => {
-          // 🔥 NEW: Double check if request was cancelled before adding bot message
+          // 🔥 Double check if request was cancelled before adding bot message
           if (abortControllerRef.current?.signal.aborted) {
             console.log('Bot response cancelled');
             return;
           }
 
-          // const botMessage = {
-          //   id: Date.now() + 1,
-          //   text: response.data.reply || "I'm having trouble generating a response. Please try asking your fitness question again!",
-          //   sender: 'bot',
-          //   timestamp: new Date(),
-          //   replyTo: userMessage.id
-          // };
+          // Response ke andar se text nikalne ka secure tareeqa
+          let botReplyText = "";
 
-          // setMessages(prev => [...prev, botMessage]);
-          // setIsTyping(false);
+          if (response.data) {
+            if (typeof response.data === 'string') {
+              botReplyText = response.data;
+            } else if (response.data.reply) {
+              botReplyText = response.data.reply;
+            } else if (response.data.text) {
+              botReplyText = response.data.text;
+            } else if (response.data.candidates && response.data.candidates[0]?.content?.parts[0]?.text) {
+              // Google Generative AI raw structure check
+              botReplyText = response.data.candidates[0].content.parts[0].text;
+            } else if (response.data.message && typeof response.data.message === 'string') {
+              botReplyText = response.data.message;
+            } else if (response.data.message && response.data.message.content) {
+              // OpenAI standard structure check
+              botReplyText = response.data.message.content;
+            } else {
+              botReplyText = JSON.stringify(response.data);
+            }
+          }
 
+          if (!botReplyText || botReplyText === "{}") {
+            botReplyText = "I'm having trouble generating a response. Please try again!";
+          }
 
-          
-// let botReplyText = "";
-// if (response.data && response.data.reply) {
-//   botReplyText = response.data.reply;
-// } else if (typeof response.data === 'string') {
-//   botReplyText = response.data;
-// } else if (response.data && response.data.text) {
-//   botReplyText = response.data.text;
-// } else {
-//   botReplyText = "I'm having trouble generating a response. Please try asking your fitness question again!";
-// }
+          const botMessage = {
+            id: Date.now() + 1,
+            text: botReplyText,
+            sender: 'bot',
+            timestamp: new Date(),
+            replyTo: userMessage ? userMessage.id : null
+          };
 
-// const botMessage = {
-//   id: Date.now() + 1,
-//   text: botReplyText,
-//   sender: 'bot',
-//   timestamp: new Date(),
-//   replyTo: userMessage.id
-// };
-
-// setMessages(prev => [...prev, botMessage]);
-// setIsTyping(false);
-//         }, 1000);
-
-//       } catch (error) {
-//         // 🔥 NEW: Check if error is due to cancellation
-//         if (error.name === 'CanceledError' || abortControllerRef.current?.signal.aborted) {
-//           console.log('Request was cancelled by user');
-//           return;
-//         }
-
-//         console.error('Chatbot error details:', error);
-        
-//         setTimeout(() => {
-//           // 🔥 NEW: Check again before adding error message
-//           if (abortControllerRef.current?.signal.aborted) {
-//             console.log('Error response cancelled');
-//             return;
-//           }
-
-//           const errorMessage = {
-//             id: Date.now() + 1,
-//             text: "I'm having trouble connecting right now. Please try again or ask me a specific fitness question!",
-//             sender: 'bot',
-//             timestamp: new Date(),
-//             replyTo: userMessage.id
-//           };
-          
-//           setMessages(prev => [...prev, errorMessage]);
-//           setIsTyping(false);
-
-
-
-
-
-
-          // Response ke andar se text nikalne ka sab se secure tareeqa
-let botReplyText = "";
-
-if (response.data) {
-  if (typeof response.data === 'string') {
-    botReplyText = response.data;
-  } else if (response.data.reply) {
-    botReplyText = response.data.reply;
-  } else if (response.data.text) {
-    botReplyText = response.data.text;
-  } else if (response.data.candidates && response.data.candidates[0]?.content?.parts[0]?.text) {
-    // Agar Google Generative AI ka raw structure aa raha ho
-    botReplyText = response.data.candidates[0].content.parts[0].text;
-  } else if (response.data.message && typeof response.data.message === 'string') {
-    botReplyText = response.data.message;
-  } else if (response.data.message && response.data.message.content) {
-    // Agar OpenAI standard structure ho
-    botReplyText = response.data.message.content;
-  } else {
-    // Agar phir bhi samajh na aaye to object ko string mein convert karke check karein
-    botReplyText = JSON.stringify(response.data);
-  }
-}
-
-// Agar response khali ho ya error ho
-if (!botReplyText || botReplyText === "{}") {
-  botReplyText = "I'm having trouble generating a response. Please try again!";
-}
-
-const botMessage = {
-  id: Date.now() + 1,
-  text: botReplyText,
-  sender: 'bot',
-  timestamp: new Date(),
-  replyTo: userMessage.id
-};
-
-setMessages(prev => [...prev, botMessage]);
-setIsTyping(false);
+          setMessages(prev => [...prev, botMessage]);
+          setIsTyping(false);
         }, 1000);
+
+      } catch (error) {
+        // 🔥 Check if error is due to cancellation
+        if (error.name === 'CanceledError' || abortControllerRef.current?.signal.aborted) {
+          console.log('Request was cancelled by user');
+          return;
+        }
+
+        console.error('Chatbot error details:', error);
+        
+        setTimeout(() => {
+          if (abortControllerRef.current?.signal.aborted) {
+            console.log('Error response cancelled');
+            return;
+          }
+
+          const errorMessage = {
+            id: Date.now() + 1,
+            text: "I'm having trouble connecting right now. Please try again or ask me a specific fitness question!",
+            sender: 'bot',
+            timestamp: new Date(),
+            replyTo: userMessage ? userMessage.id : null
+          };
+          
+          setMessages(prev => [...prev, errorMessage]);
+          setIsTyping(false);
+        }, 1000);
+
       } finally {
         setIsLoading(false);
       }
     }, 500);
   };
-
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
