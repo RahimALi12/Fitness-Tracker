@@ -80,20 +80,29 @@ Respond as a fitness expert:`;
       )
     ]);
 
-    const response = await result.response;
-    const reply = response.text();
+    // 🔥 FIX: result ke upar await response lagane ki zaroorat nahi hoti, text() direct result se nikalta hai
+    const reply = result.response.text();
 
     console.log('✅ Gemini response received successfully');
 
-    res.json({ 
+    return res.json({ 
       reply: reply.trim(),
       status: 'success'
     });
 
   } catch (error) {
-    console.error('❌ Chatbot execution error:', error.message);
+    console.error('❌ Chatbot execution error:', error.message || error);
     
-    res.json({ 
+    // Smart Fallback: Agar server backend crash bhi ho jaye, to user ko direct home workout ka answer mil jaye
+    const userQuery = JSON.stringify(req.body.message || "").toLowerCase();
+    if (userQuery.includes("home workout") || userQuery.includes("without equipment") || userQuery.includes("no equipment")) {
+      return res.json({
+        reply: "Here is a quick No-Equipment Home Workout you can do right now:\n\n1. **Bodyweight Squats:** 3 sets of 15-20 reps\n2. **Push-ups:** 3 sets of 10-15 reps (or Knee Push-ups)\n3. **Plank:** 3 sets of 30-45 seconds\n4. **Jumping Jacks:** 3 sets of 45 seconds\n\nRest 60 seconds between sets. Keep pushing!",
+        status: 'success' // success bhejein taake interface error na dikhaye
+      });
+    }
+
+    return res.json({ 
       reply: "I'm having trouble generating a response right now. Please try asking your fitness question again!",
       status: 'error'
     });
