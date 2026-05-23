@@ -135,16 +135,40 @@ const FloatingChatbot = () => {
             return;
           }
 
-          const botMessage = {
-            id: Date.now() + 1,
-            text: response.data.reply || "I'm having trouble generating a response. Please try asking your fitness question again!",
-            sender: 'bot',
-            timestamp: new Date(),
-            replyTo: userMessage.id
-          };
+          // const botMessage = {
+          //   id: Date.now() + 1,
+          //   text: response.data.reply || "I'm having trouble generating a response. Please try asking your fitness question again!",
+          //   sender: 'bot',
+          //   timestamp: new Date(),
+          //   replyTo: userMessage.id
+          // };
 
-          setMessages(prev => [...prev, botMessage]);
-          setIsTyping(false);
+          // setMessages(prev => [...prev, botMessage]);
+          // setIsTyping(false);
+
+
+          
+let botReplyText = "";
+if (response.data && response.data.reply) {
+  botReplyText = response.data.reply;
+} else if (typeof response.data === 'string') {
+  botReplyText = response.data;
+} else if (response.data && response.data.text) {
+  botReplyText = response.data.text;
+} else {
+  botReplyText = "I'm having trouble generating a response. Please try asking your fitness question again!";
+}
+
+const botMessage = {
+  id: Date.now() + 1,
+  text: botReplyText,
+  sender: 'bot',
+  timestamp: new Date(),
+  replyTo: userMessage.id
+};
+
+setMessages(prev => [...prev, botMessage]);
+setIsTyping(false);
         }, 1000);
 
       } catch (error) {
