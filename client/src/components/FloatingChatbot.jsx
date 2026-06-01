@@ -22,7 +22,7 @@ const FloatingChatbot = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   
-  // 🔥 API request cancellation
+  // 🔥 NEW: API request cancellation
   const abortControllerRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -65,7 +65,7 @@ const FloatingChatbot = () => {
 
   const sendMessage = async (messageText = null, isEdit = false, originalMessageId = null) => {
     const textToSend = messageText || inputMessage.trim();
-    if (!textToSend || isLoading) return; // 🔥 Double protection agar loading ho to function yahin ruk jaye
+    if (!textToSend || isLoading) return;
 
     let userMessage;
     
@@ -99,7 +99,7 @@ const FloatingChatbot = () => {
       ));
     }
 
-    // 🔥 Create abort controller for this request
+    // 🔥 NEW: Create abort controller for this request
     abortControllerRef.current = new AbortController();
 
     setTimeout(async () => {
@@ -116,55 +116,31 @@ const FloatingChatbot = () => {
           headers: {
             'Content-Type': 'application/json'
           },
+          // 🔥 NEW: Add signal for request cancellation
           signal: abortControllerRef.current?.signal
         });
 
         console.log('Chatbot API response:', response.data);
 
-        // 🔥 Check if request was cancelled
+        // 🔥 NEW: Check if request was cancelled
         if (abortControllerRef.current?.signal.aborted) {
           console.log('Request was cancelled');
           return;
         }
 
         setTimeout(() => {
-          // 🔥 Double check if request was cancelled before adding bot message
+          // 🔥 NEW: Double check if request was cancelled before adding bot message
           if (abortControllerRef.current?.signal.aborted) {
             console.log('Bot response cancelled');
             return;
           }
 
-          // Response ke andar se text nikalne ka secure tareeqa
-          let botReplyText = "";
-
-          if (response.data) {
-            if (typeof response.data === 'string') {
-              botReplyText = response.data;
-            } else if (response.data.reply) {
-              botReplyText = response.data.reply;
-            } else if (response.data.text) {
-              botReplyText = response.data.text;
-            } else if (response.data.candidates && response.data.candidates[0]?.content?.parts[0]?.text) {
-              botReplyText = response.data.candidates[0].content.parts[0].text;
-            } else if (response.data.message && typeof response.data.message === 'string') {
-              botReplyText = response.data.message;
-            } else if (response.data.message && response.data.message.content) {
-              botReplyText = response.data.message.content;
-            } else {
-              botReplyText = JSON.stringify(response.data);
-            }
-          }
-
-          if (!botReplyText || botReplyText === "{}") {
-            botReplyText = "I'm having trouble generating a response. Please try again!";
-          }
-
           const botMessage = {
             id: Date.now() + 1,
-            text: botReplyText,
+            text: response.data.reply || "I'm having trouble generating a response. Please try asking your fitness question again!",
             sender: 'bot',
             timestamp: new Date(),
-            replyTo: userMessage ? userMessage.id : null
+            replyTo: userMessage.id
           };
 
           setMessages(prev => [...prev, botMessage]);
@@ -172,7 +148,7 @@ const FloatingChatbot = () => {
         }, 1000);
 
       } catch (error) {
-        // 🔥 Check if error is due to cancellation
+        // 🔥 NEW: Check if error is due to cancellation
         if (error.name === 'CanceledError' || abortControllerRef.current?.signal.aborted) {
           console.log('Request was cancelled by user');
           return;
@@ -181,6 +157,7 @@ const FloatingChatbot = () => {
         console.error('Chatbot error details:', error);
         
         setTimeout(() => {
+          // 🔥 NEW: Check again before adding error message
           if (abortControllerRef.current?.signal.aborted) {
             console.log('Error response cancelled');
             return;
@@ -191,13 +168,12 @@ const FloatingChatbot = () => {
             text: "I'm having trouble connecting right now. Please try again or ask me a specific fitness question!",
             sender: 'bot',
             timestamp: new Date(),
-            replyTo: userMessage ? userMessage.id : null
+            replyTo: userMessage.id
           };
           
           setMessages(prev => [...prev, errorMessage]);
           setIsTyping(false);
         }, 1000);
-
       } finally {
         setIsLoading(false);
       }
@@ -207,8 +183,6 @@ const FloatingChatbot = () => {
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (isLoading) return; // 🔥 Agar loading chal rhi hai to Enter press karne par kuch na ho
-      
       if (editingMessage) {
         sendMessage(inputMessage, true, editingMessage.id);
       } else {
@@ -232,19 +206,21 @@ const FloatingChatbot = () => {
   ];
 
   const handleSuggestionClick = (suggestion) => {
-    if (isLoading) return; // 🔥 Request process hote waqt suggestions par click block
     setInputMessage(suggestion);
     if (inputRef.current) {
       inputRef.current.focus();
     }
   };
 
+  // 🔥 ENHANCED: Clear chat with complete request cancellation
   const clearChat = () => {
+    // Cancel any ongoing API request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       console.log('Cancelled ongoing API request');
     }
     
+    // Cancel any ongoing loading/typing immediately
     setIsLoading(false);
     setIsTyping(false);
     
@@ -307,7 +283,7 @@ const FloatingChatbot = () => {
 
   return (
     <>
-      {/* Message Square Icon */}
+      {/* 🔥 UPDATED: Message Square Icon */}
       <div 
         className={`premium-chat-icon ${isOpen ? 'chat-open' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
@@ -320,9 +296,10 @@ const FloatingChatbot = () => {
                 <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
               </svg>
             ) : (
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/>
-              </svg>
+              // 🔥 NEW: Message Square Icon
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"/>
+</svg>
             )}
           </div>
           <div className="ripple-effect"></div>
@@ -513,7 +490,6 @@ const FloatingChatbot = () => {
                       key={index}
                       className="premium-suggestion-btn"
                       onClick={() => handleSuggestionClick(suggestion)}
-                      disabled={isLoading} // 🔥 Request loading ke dauran clicks disabled
                       style={{
                         animationDelay: `${index * 0.1}s`
                       }}
@@ -590,8 +566,6 @@ const FloatingChatbot = () => {
                     <div className="input-info">
                       <span>{inputMessage.length}/500</span>
                     </div>
-                    
-                    {/* 🔥 FIXED: Button standard strict loading disable logic added */}
                     <button 
                       onClick={() => {
                         if (editingMessage) {
