@@ -1,298 +1,3 @@
-
-const express = require('express');
-const router = express.Router();
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
-let genAI = null;
-
-const getAIInstance = () => {
-  if (genAI) return genAI;
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.error('❌ GEMINI_API_KEY missing');
-    return null;
-  }
-  genAI = new GoogleGenerativeAI(apiKey);
-  return genAI;
-};
-
-router.post('/chatbot', async (req, res) => {
-  console.log('📨 Chatbot API Called');
-  
-  const body = req.body || {};
-  const incomingMessage = body.message || "";
-  const fallbackCheck = String(incomingMessage).toLowerCase();
-
-  // EMERGENCY QUICK RESPONSES (Taake crash ka koi chance hi na rahe ahem queries par)
-  if (fallbackCheck.includes("home workout") || fallbackCheck.includes("without equipment")) {
-    return res.status(200).json({
-      status: 'success',
-      reply: "Here is a quick No-Equipment Home Workout you can do right now:\n\n1. **Bodyweight Squats:** 3 sets of 15-20 reps\n2. **Push-ups:** 3 sets of 10-15 reps\n3. **Plank:** 3 sets of 30-45 seconds\n4. **Jumping Jacks:** 3 sets of 45 seconds\n\nRest 60 seconds between sets."
-    });
-  }
-
-  if (fallbackCheck.includes("protein") || fallbackCheck.includes("food")) {
-    return res.status(200).json({
-      status: 'success',
-      reply: "Top High-Protein Foods for Muscle Building:\n\n1. **Chicken Breast:** ~31g protein per 100g\n2. **Eggs:** ~6g protein per large egg\n3. **Greek Yogurt / Paneer:** ~10-18g protein\n4. **Lentils (Daal) & Chickpeas:** Excellent plant-based protein source.\n\nAim for 1.6g to 2.2g of protein per kg of your body weight daily!"
-    });
-  }
-
-  try {
-    const ai = getAIInstance();
-    if (!ai) {
-      return res.status(200).json({
-        status: 'success',
-        reply: "Fitness Database is active, but AI brain is offline. Try asking about home workouts or protein foods!"
-      });
-    }
-
-    // Standard call without Promise.race to isolate Vercel 500 error
-    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    
-    console.log('🚀 Invoking Gemini API...');
-    const result = await model.generateContent(`You are an expert fitness coach. Answer this query professionally in 2-3 sentences: ${incomingMessage}`);
-    
-    // Completely bulletproof extraction text handle
-    if (result && result.response) {
-      const replyText = typeof result.response.text === 'function' ? await result.response.text() : result.response.text;
-      
-      return res.status(200).json({
-        status: 'success',
-        reply: replyText.trim()
-      });
-    }
-
-    throw new Error("Invalid response object structure from Gemini");
-
-  } catch (error) {
-    console.error('🛑 Vercel execution error caught:', error.message || error);
-    return res.status(200).json({ 
-      status: 'success',
-      reply: "I am optimizing my configuration right now. For workouts or meal guidance, feel free to drop a specific keyword!"
-    });
-  }
-});
-
-module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const express = require('express');
-// const router = express.Router();
-// const { GoogleGenerativeAI } = require('@google/generative-ai');
-
-// // Robust initialization
-// let genAI = null;
-// let isAIReady = false;
-
-// const initializeGemini = () => {
-//   try {
-//     const apiKey = process.env.GEMINI_API_KEY;
-    
-//     console.log('🔧 Initializing Gemini AI...');
-//     console.log('🔑 API Key Status:', apiKey ? 'FOUND' : 'MISSING');
-//     console.log('🔑 API Key Length:', apiKey?.length || 0);
-//     console.log('🔑 API Key Preview:', apiKey ? `${apiKey.substring(0, 10)}...${apiKey.slice(-4)}` : 'N/A');
-    
-//     if (!apiKey) {
-//       console.error('❌ GEMINI_API_KEY is missing');
-//       return false;
-//     }
-    
-//     if (apiKey === 'your_api_key_here' || apiKey.length < 30) {
-//       console.error('❌ GEMINI_API_KEY seems invalid');
-//       return false;
-//     }
-    
-//     genAI = new GoogleGenerativeAI(apiKey);
-//     isAIReady = true;
-    
-//     console.log('✅ Gemini AI initialized successfully');
-//     return true;
-    
-//   } catch (error) {
-//     console.error('❌ Gemini initialization failed:', error.message);
-//     isAIReady = false;
-//     return false;
-//   }
-// };
-
-// // Initialize immediately
-// // const initialized = initializeGemini();
-
-// router.post('/chatbot', async (req, res) => {
-//   console.log('📨 Chatbot API called with:', req.body);
-  
-//   try {
-//     const { message, isContextual } = req.body;
-
-//     if (!message || message.trim() === '') {
-//       return res.json({ 
-//         reply: "Please ask me something about fitness, workouts, nutrition, or health!",
-//         status: 'error'
-//       });
-//     }
-
-//     // Check if AI is ready
-//     // if (!initialized || !isAIReady || !genAI) {
-//     //   console.log('⚠️ AI not ready, returning error message');
-//     //   return res.json({ 
-//     //     reply: "I'm having trouble connecting to my AI brain right now. Please try again in a moment! In the meantime, I'm here to help with any fitness, workout, nutrition, or health questions you have.",
-//     //     status: 'fallback'
-//     //   });
-//     // }
-
-
-//     // Check if AI is ready
-// // Check and Initialize AI on the spot
-//     if (!genAI) {
-//       const apiKey = process.env.GEMINI_API_KEY;
-//       if (apiKey) {
-//         genAI = new GoogleGenerativeAI(apiKey);
-//       } else {
-//         return res.json({ 
-//           reply: "AI brain not connected (API Key missing in Vercel).", 
-//           status: 'error' 
-//         });
-//       }
-//     }
-
-//     // Enhanced AI prompting for fitness-focused responses with context
-//     // const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-//       const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-
-//     let enhancedPrompt;
-    
-//     if (isContextual) {
-//       enhancedPrompt = `You are an expert fitness coach and nutritionist. You ONLY answer questions related to fitness, workouts, nutrition, health, wellness, weight management, muscle building, and sports.
-
-// Context and conversation flow:
-// ${message}
-
-// Instructions:
-// - If the question is about fitness/health topics, provide helpful, practical advice in 2-3 sentences
-// - If the question is NOT about fitness/health, respond: "I'm a fitness assistant and can only help with workout, nutrition, and health questions. What fitness goals can I help you with today?"
-// - Always maintain conversation context and provide connected, relevant responses
-// - Be encouraging and motivational
-// - Give specific, actionable advice when possible
-
-// Respond naturally as a fitness expert:`;
-//     } else {
-//       enhancedPrompt = `You are an expert fitness coach and nutritionist. You ONLY answer questions related to fitness, workouts, nutrition, health, wellness, weight management, muscle building, and sports.
-
-// Question: "${message}"
-
-// Instructions:
-// - If the question is about fitness/health topics, provide helpful, practical advice in 2-3 sentences
-// - If the question is NOT about fitness/health, respond: "I'm a fitness assistant and can only help with workout, nutrition, and health questions. What fitness goals can I help you with today?"
-// - Be encouraging and motivational
-// - Give specific, actionable advice when possible
-
-// Respond as a fitness expert:`;
-//     }
-
-//     console.log('🤖 Sending enhanced request to Gemini...');
-    
-//     const result = await Promise.race([
-//       model.generateContent(enhancedPrompt),
-//       new Promise((_, reject) => 
-//         // setTimeout(() => reject(new Error('Request timeout')), 20000)
-// setTimeout(() => reject(new Error('Request timeout')), 25000)
-//           )
-//     ]);
-
-//     const response = await result.response;
-//     const reply = response.text();
-
-//     console.log('✅ Gemini response received');
-
-//     res.json({ 
-//       reply: reply.trim(),
-//       status: 'success'
-//     });
-
-//   } catch (error) {
-//     console.error('❌ Chatbot error:', error.message);
-    
-//     res.json({ 
-//       reply: "I'm having trouble generating a response right now. Please try asking your fitness question again, or ask me about workouts, nutrition, or health topics!",
-//       status: 'error'
-//     });
-//   }
-// });
-
-// // Test endpoint
-// router.get('/test', (req, res) => {
-//   res.json({
-//     message: 'Enhanced Chatbot API working',
-//     aiReady: isAIReady,
-//     hasApiKey: !!process.env.GEMINI_API_KEY,
-//     keyLength: process.env.GEMINI_API_KEY?.length || 0,
-//     initialized: initialized,
-//     features: ['contextual_conversation', 'ai_only_responses', 'fitness_focused']
-//   });
-// });
-
-// module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // const express = require('express');
 // const router = express.Router();
 // const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -541,4 +246,292 @@ module.exports = router;
 
 
 
+// const express = require('express');
+// const router = express.Router();
+// const { GoogleGenerativeAI } = require('@google/generative-ai');
 
+// // Robust initialization
+// let genAI = null;
+// let isAIReady = false;
+
+// const initializeGemini = () => {
+//   try {
+//     const apiKey = process.env.GEMINI_API_KEY;
+    
+//     console.log('🔧 Initializing Gemini AI...');
+//     console.log('🔑 API Key Status:', apiKey ? 'FOUND' : 'MISSING');
+//     console.log('🔑 API Key Length:', apiKey?.length || 0);
+//     console.log('🔑 API Key Preview:', apiKey ? `${apiKey.substring(0, 10)}...${apiKey.slice(-4)}` : 'N/A');
+    
+//     if (!apiKey) {
+//       console.error('❌ GEMINI_API_KEY is missing');
+//       return false;
+//     }
+    
+//     if (apiKey === 'your_api_key_here' || apiKey.length < 30) {
+//       console.error('❌ GEMINI_API_KEY seems invalid');
+//       return false;
+//     }
+    
+//     genAI = new GoogleGenerativeAI(apiKey);
+//     isAIReady = true;
+    
+//     console.log('✅ Gemini AI initialized successfully');
+//     return true;
+    
+//   } catch (error) {
+//     console.error('❌ Gemini initialization failed:', error.message);
+//     isAIReady = false;
+//     return false;
+//   }
+// };
+
+// // Initialize immediately
+// const initialized = initializeGemini();
+
+// router.post('/chatbot', async (req, res) => {
+//   console.log('📨 Chatbot API called with:', req.body);
+  
+//   try {
+//     const { message, isContextual } = req.body;
+
+//     if (!message || message.trim() === '') {
+//       return res.json({ 
+//         reply: "Please ask me something about fitness, workouts, nutrition, or health!",
+//         status: 'error'
+//       });
+//     }
+
+//     // Check if AI is ready
+//     if (!initialized || !isAIReady || !genAI) {
+//       console.log('⚠️ AI not ready, returning error message');
+//       return res.json({ 
+//         reply: "I'm having trouble connecting to my AI brain right now. Please try again in a moment! In the meantime, I'm here to help with any fitness, workout, nutrition, or health questions you have.",
+//         status: 'fallback'
+//       });
+//     }
+
+//     // Enhanced AI prompting for fitness-focused responses with context
+//     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+//     let enhancedPrompt;
+    
+//     if (isContextual) {
+//       enhancedPrompt = `You are an expert fitness coach and nutritionist. You ONLY answer questions related to fitness, workouts, nutrition, health, wellness, weight management, muscle building, and sports.
+
+// Context and conversation flow:
+// ${message}
+
+// Instructions:
+// - If the question is about fitness/health topics, provide helpful, practical advice in 2-3 sentences
+// - If the question is NOT about fitness/health, respond: "I'm a fitness assistant and can only help with workout, nutrition, and health questions. What fitness goals can I help you with today?"
+// - Always maintain conversation context and provide connected, relevant responses
+// - Be encouraging and motivational
+// - Give specific, actionable advice when possible
+
+// Respond naturally as a fitness expert:`;
+//     } else {
+//       enhancedPrompt = `You are an expert fitness coach and nutritionist. You ONLY answer questions related to fitness, workouts, nutrition, health, wellness, weight management, muscle building, and sports.
+
+// Question: "${message}"
+
+// Instructions:
+// - If the question is about fitness/health topics, provide helpful, practical advice in 2-3 sentences
+// - If the question is NOT about fitness/health, respond: "I'm a fitness assistant and can only help with workout, nutrition, and health questions. What fitness goals can I help you with today?"
+// - Be encouraging and motivational
+// - Give specific, actionable advice when possible
+
+// Respond as a fitness expert:`;
+//     }
+
+//     console.log('🤖 Sending enhanced request to Gemini...');
+    
+//     const result = await Promise.race([
+//       model.generateContent(enhancedPrompt),
+//       new Promise((_, reject) => 
+//         setTimeout(() => reject(new Error('Request timeout')), 20000)
+//       )
+//     ]);
+
+//     const response = await result.response;
+//     const reply = response.text();
+
+//     console.log('✅ Gemini response received');
+
+//     res.json({ 
+//       reply: reply.trim(),
+//       status: 'success'
+//     });
+
+//   } catch (error) {
+//     console.error('❌ Chatbot error:', error.message);
+    
+//     res.json({ 
+//       reply: "I'm having trouble generating a response right now. Please try asking your fitness question again, or ask me about workouts, nutrition, or health topics!",
+//       status: 'error'
+//     });
+//   }
+// });
+
+// // Test endpoint
+// router.get('/test', (req, res) => {
+//   res.json({
+//     message: 'Enhanced Chatbot API working',
+//     aiReady: isAIReady,
+//     hasApiKey: !!process.env.GEMINI_API_KEY,
+//     keyLength: process.env.GEMINI_API_KEY?.length || 0,
+//     initialized: initialized,
+//     features: ['contextual_conversation', 'ai_only_responses', 'fitness_focused']
+//   });
+// });
+
+// module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const express = require('express');
+const router = express.Router();
+const Groq = require('groq-sdk');
+
+// Robust initialization
+let groq = null;
+let isAIReady = false;
+
+const initializeGroq = () => {
+  try {
+    const apiKey = process.env.GROQ_API_KEY;
+    
+    console.log('🔧 Initializing Groq AI...');
+    console.log('🔑 API Key Status:', apiKey ? 'FOUND' : 'MISSING');
+    
+    if (!apiKey) {
+      console.error('❌ GROQ_API_KEY is missing in .env');
+      return false;
+    }
+    
+    // Initialize Groq SDK
+    groq = new Groq({ apiKey: apiKey });
+    isAIReady = true;
+    
+    console.log('✅ Groq AI initialized successfully (Ultra Fast Mode)');
+    return true;
+    
+  } catch (error) {
+    console.error('❌ Groq initialization failed:', error.message);
+    isAIReady = false;
+    return false;
+  }
+};
+
+// Initialize immediately
+const initialized = initializeGroq();
+
+router.post('/chatbot', async (req, res) => {
+  console.log('📨 Chatbot API called with:', req.body);
+  
+  try {
+    const { message, isContextual } = req.body;
+
+    if (!message || message.trim() === '') {
+      return res.json({ 
+        reply: "Please ask me something about fitness, workouts, nutrition, or health!",
+        status: 'error'
+      });
+    }
+
+    // Check if AI is ready - Safe Fallback
+    if (!initialized || !isAIReady || !groq) {
+      console.log('⚠️ Groq AI not ready, returning fallback message');
+      return res.json({ 
+        reply: "I am currently updating my fitness database. To calculate your daily protein, a general rule is 1.6 to 2.2 grams per kilogram of body weight depending on your training intensity. Let me know your fitness goals!",
+        status: 'fallback'
+      });
+    }
+
+    // System prompt setting up the fitness persona
+    const systemPrompt = `You are an expert fitness coach and nutritionist. You ONLY answer questions related to fitness, workouts, nutrition, health, wellness, weight management, muscle building, and sports.
+Instructions:
+- If the question is about fitness/health topics, provide helpful, practical advice in 2-3 sentences.
+- If the question is NOT about fitness/health, respond: "I'm a fitness assistant and can only help with workout, nutrition, and health questions. What fitness goals can I help you with today?"
+- Always maintain conversation context if provided and give connected, relevant responses.
+- Be encouraging, motivational, and give specific, actionable advice.`;
+
+    let userContent = message;
+    if (isContextual) {
+      userContent = `Here is the conversation history and current question:\n${message}`;
+    }
+
+    console.log('🤖 Sending request to Groq (Llama-3)...');
+    
+    let reply = "";
+    try {
+      // Using Llama3 8B model which is extremely fast and smart
+      const chatCompletion = await groq.chat.completions.create({
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userContent }
+        ],
+        model: 'llama-3.1-8b-instant', // Super fast aur active model
+        temperature: 0.7,
+        max_tokens: 300,
+      });
+
+      reply = chatCompletion.choices[0]?.message?.content || "";
+    } catch (apiErr) {
+      console.error('⚠️ Groq API Call Error:', apiErr.message);
+      
+      // Smart fallback logic
+      if (message.toLowerCase().includes('protein')) {
+        reply = "For active individuals and muscle building, you generally need about 1.6 to 2.2 grams of protein per kilogram of body weight daily. Try splitting it across 4-5 meals for optimal absorption!";
+      } else {
+        reply = "I'm experiencing a quick connection blip. For a quick tip: focus on progressive overload in your workouts and consistency in your meals!";
+      }
+    }
+
+    console.log('✅ Response generated safely from Groq');
+
+    return res.json({ 
+      reply: reply.trim(),
+      status: 'success'
+    });
+
+  } catch (error) {
+    console.error('❌ Chatbot global catch error:', error.message);
+    return res.json({ 
+      reply: "I'm having a little trouble processing that structure right now. Please try asking your fitness question again!",
+      status: 'error'
+    });
+  }
+});
+
+// Test endpoint
+router.get('/test', (req, res) => {
+  res.json({
+    message: 'Groq Chatbot API working',
+    aiReady: isAIReady,
+    hasApiKey: !!process.env.GROQ_API_KEY,
+    initialized: initialized,
+    modelUsed: 'llama3-8b-8192',
+    features: ['contextual_conversation', 'ultra_fast_speed', 'fitness_focused']
+  });
+});
+
+module.exports = router;
